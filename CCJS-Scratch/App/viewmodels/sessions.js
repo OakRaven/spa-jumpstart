@@ -1,6 +1,13 @@
 ﻿define(['services/datacontext'], function (datacontext) {
   var sessions = ko.observableArray();
-  var initialized = false;
+  
+  function activate() {
+    return datacontext.getSessionPartials(sessions);
+  }
+
+  function refresh() {
+    return datacontext.getSessionPartials(sessions, true);
+  }
 
   var vm = {
     activate: activate,
@@ -10,14 +17,4 @@
   };
 
   return vm;
-
-  function activate() {
-    if (initialized) { return; }
-    initialized = true;
-    return refresh();
-  }
-
-  function refresh() {
-    return datacontext.getSessions(sessions);
-  }
 });
