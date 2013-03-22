@@ -2,7 +2,8 @@
   <h3 class="page-title" data-bind="text: title"></h3>
   <div class="button-bar">
     <button class="btn btn-info"
-      data-bind="click: goBack"><i class="icon-hand-left"></i>Back</button>
+      data-bind="click: goBack">
+      <i class="icon-hand-left"></i>Back</button>
   </div>
   <div data-bind="with: session">
     <div class="titleblock">
@@ -13,15 +14,18 @@
     <div class="details-left">
       <div>
         <label>Track</label>
-        <address data-bind="text: track().name"></address>
+        <select data-bind="options: $parent.tracks,
+                optionsText: 'name', value: track"></select>
       </div>
       <div>
         <label>Time slot</label>
-        <address data-bind="text: timeSlot().name"></address>
+        <select data-bind="options: $parent.timeSlots,
+                optionsText: 'name', value: timeSlot"></select>
       </div>
       <div>
         <label>Room</label>
-        <address data-bind="text: room().name"></address>
+        <select data-bind="options: $parent.rooms,
+                optionsText: 'name', value: room"></select>
       </div>
       <div>
         <label>Code</label>
@@ -39,10 +43,12 @@
         <img data-bind="attr: { src: imageName }" class="img-polaroid" />
         <address data-bind="text: fullName"></address>
       </div>
-      <div>
-        <label>Description</label>
-        <textarea data-bind="value: description"
-          placeholder="Enter description"></textarea>
+      <div class="details-right">
+        <div>
+          <label>Description</label>
+          <textarea data-bind="value: description"
+            placeholder="Enter description"></textarea>
+        </div>
       </div>
     </div>
   </div>

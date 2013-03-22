@@ -82,7 +82,7 @@ define([
 
       function fetchSucceeded(data) {
         var s = data.entity;
-        s.isPartial() ? refreshSession(s) : sessionObservable(s);
+        return s.isPartial() ? refreshSession(s) : sessionObservable(s);
       }
 
       function refreshSession(session) {
@@ -102,7 +102,21 @@ define([
     }
 
     var primeData = function (  ) {
-      return Q.all([getLookups(), getSpeakerPartials(null, true)]);
+      var promise = Q.all([
+        getLookups(),
+        getSpeakerPartials(null, true)]);
+
+      return promise.then(success);
+
+      function success() {
+        datacontext.lookups = {
+          rooms: getLocal('Rooms', 'name'),
+          tracks: getLocal('Tracks', 'name'),
+          timeslots: getLocal('TimeSlots', 'start'),
+          speakers: getLocal('Persons', orderBy.speaker)
+        };
+        log('Primed data', datacontext.lookups);
+      }
     }
     
     var datacontext = {
