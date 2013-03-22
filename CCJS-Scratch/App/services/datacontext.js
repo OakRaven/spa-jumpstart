@@ -101,6 +101,23 @@ define([
       }
     }
 
+    var saveChanges = function () {
+      return manager.saveChanges()
+        .then(saveSucceeded)
+        .fail(saveFailed);
+
+      function saveSucceeded(saveResult) {
+        log('Saved data successfully', saveResult, true);
+      }
+
+      function saveFailed(error) {
+        var msg = 'Save failed: ' + error.message;
+        logError(msg, error);
+        error.message = msg;
+        throw error;
+      }
+    }
+
     var primeData = function (  ) {
       var promise = Q.all([
         getLookups(),
@@ -123,6 +140,7 @@ define([
       getSpeakerPartials: getSpeakerPartials,
       getSessionPartials: getSessionPartials,
       getSessionById: getSessionById,
+      saveChanges: saveChanges,
       primeData: primeData
     };
 

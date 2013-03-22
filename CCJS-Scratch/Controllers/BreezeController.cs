@@ -1,10 +1,8 @@
-﻿using Breeze.WebApi;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
+using Breeze.WebApi;
+using Newtonsoft.Json.Linq;
 
 namespace CodeCamper.Controllers
 {
@@ -18,6 +16,12 @@ namespace CodeCamper.Controllers
     public string Metadata()
     {
       return _contextProvider.Metadata();
+    }
+
+    [HttpPost]
+    public SaveResult SaveChanges(JObject saveBundle)
+    {
+      return _contextProvider.SaveChanges(saveBundle);
     }
 
     [HttpGet]
@@ -48,7 +52,5 @@ namespace CodeCamper.Controllers
       return _contextProvider.Context.Persons
         .Where(p => p.SpeakerSessions.Any());
     }
-
-
   }
 }

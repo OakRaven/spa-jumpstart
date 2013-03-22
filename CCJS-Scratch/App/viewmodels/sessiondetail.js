@@ -17,11 +17,15 @@ define(['services/datacontext', 'durandal/plugins/router'],
       rooms(datacontext.lookups.rooms);
       tracks(datacontext.lookups.tracks);
       timeSlots(datacontext.lookups.timeslots);
-    }
+    };
 
     var goBack = function () {
       router.navigateBack();
-    }
+    };
+
+    var save = function () {
+      return datacontext.saveChanges();
+    };
 
     var vm = {
       activate: activate,
@@ -29,6 +33,7 @@ define(['services/datacontext', 'durandal/plugins/router'],
       rooms: rooms,
       tracks: tracks,
       timeSlots: timeSlots,
+      save: save,
       session: session,
       title: 'Session Details'
     };
