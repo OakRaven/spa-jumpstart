@@ -49,7 +49,7 @@ define([
     var getSessionPartials = function (sessionsObservable, forceRemote) {
       if (!forceRemote) {
         var p = getLocal('Sessions', orderBy.session);
-        if (p.length > 0) {
+        if (p.length > 3) {
           sessionsObservable(p);
           return Q.resolve();
         }
@@ -74,13 +74,41 @@ define([
       }
     };
 
-    var primeData = function () {
+    var getSessionById = function (sessionId, sessionObservable) {
+      return manager
+        .fetchEntityByKey(entityNames.session, sessionId, true)
+        .then(fetchSucceeded)
+        .fail(queryFailed);
+
+      function fetchSucceeded(data) {
+        var s = data.entity;
+        s.isPartial() ? refreshSession(s) : sessionObservable(s);
+      }
+
+      function refreshSession(session) {
+        return EntityQuery.fromEntities(session)
+          .using(manager)
+          .execute()
+          .then(querySucceeded)
+          .fail(queryFailed);
+      }
+
+      function querySucceeded(data) {
+        var s = data.results[0];
+        s.isPartial(false);
+        log('Retrieved [Session] from remote data source', s, true);
+        return sessionObservable(s);
+      }
+    }
+
+    var primeData = function (  ) {
       return Q.all([getLookups(), getSpeakerPartials(null, true)]);
     }
     
     var datacontext = {
       getSpeakerPartials: getSpeakerPartials,
       getSessionPartials: getSessionPartials,
+      getSessionById: getSessionById,
       primeData: primeData
     };
 

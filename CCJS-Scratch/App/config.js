@@ -19,6 +19,11 @@
     moduleId: 'viewmodels/speakers',
     name: 'Speakers',
     visible: true
+  }, {
+    url: 'sessiondetail/:id',
+    moduleId: 'viewmodels/sessiondetail',
+    name: 'View a Session',
+    visible: false
   }];
 
   var startModule = 'sessions';

@@ -1,20 +1,45 @@
-﻿define(['services/datacontext'], function (datacontext) {
-  var sessions = ko.observableArray();
-  
-  function activate() {
-    return datacontext.getSessionPartials(sessions);
-  }
+﻿define([
+  'services/datacontext',
+  'durandal/plugins/router'],
 
-  function refresh() {
-    return datacontext.getSessionPartials(sessions, true);
-  }
+  function (datacontext, router) {
 
-  var vm = {
-    activate: activate,
-    sessions: sessions,
-    title: 'Sessions',
-    refresh: refresh
-  };
+    var sessions = ko.observableArray();
 
-  return vm;
-});
+    var activate = function () {
+      return datacontext.getSessionPartials(sessions);
+    };
+
+    var refresh = function () {
+      return datacontext.getSessionPartials(sessions, true);
+    };
+
+    var viewAttached = function (view) {
+      bindEventToList(view, '.session-brief', gotoDetails);
+    };
+
+    var gotoDetails = function (selectedSession) {
+      if (selectedSession && selectedSession.id()) {
+        var url = "#/sessiondetail/" + selectedSession.id();
+        router.navigateTo(url);
+      }
+    }
+
+    var bindEventToList = function (rootSelector, selector, callback, eventName) {
+      var eName = eventName || 'click';
+      $(rootSelector).on(eName, selector, function () {
+        var session = ko.dataFor(this);
+        callback(session);
+      });
+    };
+
+    var vm = {
+      activate:     activate,
+      viewAttached: viewAttached,
+      sessions:     sessions,
+      title:        'Sessions',
+      refresh:      refresh
+    };
+
+    return vm;
+  });
