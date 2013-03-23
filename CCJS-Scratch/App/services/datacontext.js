@@ -117,8 +117,8 @@ define([
       }
 
       function saveFailed(error) {
-        var msg = 'Save failed: ' + error.message;
-        logError(msg, error);
+        var msg = 'Save failed: ' + getErrorMessages(error);
+        logger.logError(msg, error, system.getModuleId(datacontext), true);
         error.message = msg;
         throw error;
       }
@@ -204,6 +204,27 @@ define([
       if (!includeNullos) { query = query.where('id', '!=', 0) };
 
       return manager.executeQueryLocally(query);
+    }
+
+    function getErrorMessages(error) {
+      var msg = error.message;
+      if (msg.match(/validation error/i)) {
+        return getValidationMessages(error);
+      }
+      return msg;
+    }
+
+    function getValidationMessages(error) {
+      try {
+        return error.entitiesWithErrors.map(function (entity) {
+          return entity.entityAspect.getValidationErrors().map(function (valError) {
+            return valError.errorMessage;
+          }).join('; <br />');
+        }).join('; <br />');
+      } catch (e) {
+
+      }
+      return 'validation error';
     }
 
     //#endregion
