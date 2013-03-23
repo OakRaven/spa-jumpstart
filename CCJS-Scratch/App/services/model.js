@@ -1,5 +1,6 @@
 define(['config'], function (config) {
   var imageSettings = config.imageSettings;
+  var nulloDate = new Date(1900, 0, 1);
 
   var orderBy = {
     speaker: 'firstName, lastName',
@@ -13,14 +14,6 @@ define(['config'], function (config) {
     track:    'Track',
     timeslot: 'TimeSlot'
   };
-  
-  var model = {
-    configureMetaDataStore: configureMetaDataStore,
-    entityNames: entityNames,
-    orderBy: orderBy
-  };
-
-  return model;
 
   function configureMetaDataStore(metadataStore) {
     metadataStore.registerEntityTypeCtor(
@@ -40,7 +33,11 @@ define(['config'], function (config) {
 
   function personInitializer(person) {
     person.fullName = ko.computed(function () {
-      return person.firstName() + ' ' + person.lastName();
+      if (person.lastName()) {
+        return person.firstName() + ' ' + person.lastName();
+      } else {
+        return person.firstName();
+      }
     });
 
     person.imageName = ko.computed(function () {
@@ -50,7 +47,13 @@ define(['config'], function (config) {
 
   function timeSlotInitializer(timeSlot) {
     timeSlot.name = ko.computed(function () {
-      return timeSlot.start() ? moment.utc(timeSlot.start()).format('ddd hh:mm a') : '';
+      var start = timeSlot.start();
+      var value = ((start - nulloDate === 0) ?
+        ' [Select a timeslot]' :
+        (start && moment.utc(start).isValid()) ?
+          moment.utc(start).format('ddd hh:mm a') : '[Unknown]');
+      
+      return value;
     });
   }
 
@@ -58,5 +61,30 @@ define(['config'], function (config) {
     return config.imageSettings.imageBasePath +
         (source || imageSettings.unknownPersonImageSource);
   };
+
+  function createNullos(manager) {
+    var unchanged = breeze.EntityState.Unchanged;
+
+    createNullo(entityNames.timeslot, { start: nulloDate, isSessionSlot: true });
+    createNullo(entityNames.room);
+    createNullo(entityNames.track);
+    createNullo(entityNames.speaker, { firstName: ' [Select a person]' });
+
+    function createNullo(entityName, values) {
+      var initialValues = values
+        || { name: ' [Select a ' + entityName.toLowerCase() + ']' };
+
+      manager.createEntity(entityName, initialValues, unchanged);
+    }
+  }
+
+  var model = {
+    configureMetaDataStore: configureMetaDataStore,
+    entityNames: entityNames,
+    orderBy: orderBy,
+    createNullos: createNullos
+  };
+
+  return model;
 
 });
