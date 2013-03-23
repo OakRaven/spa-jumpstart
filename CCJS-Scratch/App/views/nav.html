@@ -16,5 +16,18 @@
         html: caption"
         class="btn btn-info"></a>
     </div>
+    <div class="btn-group">
+      <a class="btn btn-info dropdown-toggle"
+        data-toggle="dropdown">
+        <i class="icon-user"></i>
+        <span class="text">Admin</span> 
+        <span class="caret"></span></a>
+
+      <ul class="dropdown-menu pull-right">
+        <!-- ko foreach: adminRoutes -->
+        <li><a href="#" data-bind="click: $parent.addSession, html: caption"></a></li>
+        <!-- /ko -->
+      </ul>
+    </div>
   </div>
 </nav>

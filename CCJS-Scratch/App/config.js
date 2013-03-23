@@ -24,6 +24,13 @@
     moduleId: 'viewmodels/sessiondetail',
     name: 'View a Session',
     visible: false
+  }, {
+    url: 'sessionadd',
+    moduleId: 'viewmodels/sessionadd',
+    name: 'Add a Session',
+    visible: false,
+    caption: '<i class="icon-plus"></i> Add Session',
+    settings: {admin: true}
   }];
 
   var startModule = 'sessions';

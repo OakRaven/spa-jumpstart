@@ -1,9 +1,27 @@
-﻿define(['durandal/system', 'services/logger', 'durandal/plugins/router', 'config', 'services/datacontext'],
+﻿/// <reference path="../../Scripts/knockout-2.2.1.js" />
+
+define([
+  'durandal/system',
+  'services/logger',
+  'durandal/plugins/router',
+  'config',
+  'services/datacontext'],
+
 function (system, logger, router, config, datacontext) {
+
+  var adminRoutes = ko.computed(function () {
+    return router.allRoutes().filter(function (r) {
+      return r.settings.admin;
+    });
+  });
+
   var shell = {
     activate: activate,
+    adminRoutes: adminRoutes,
+    addSession: addSession,
     router: router
   };
+
   return shell;
 
   function activate() {
@@ -17,7 +35,7 @@ function (system, logger, router, config, datacontext) {
     logger.logError(msg, error, system.getModuleId(shell), true);
   }
 
-  function boot(){
+  function boot() {
     logger.log('CodeCamper JumpStart Loaded!',
       null,
       system.getModuleId(shell),
@@ -25,5 +43,9 @@ function (system, logger, router, config, datacontext) {
 
     router.map(config.routes);
     return router.activate(config.startModule);
+  }
+
+  function addSession(item) {
+    router.navigateTo(item.hash);
   }
 });
