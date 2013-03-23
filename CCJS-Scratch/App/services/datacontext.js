@@ -13,8 +13,9 @@ define([
   function (logger, system, config, model, partialMapper) {
     var EntityQuery = breeze.EntityQuery;
     var entityNames = model.entityNames;
-    var orderBy     = model.orderBy;
-    var manager     = configureBreezeManager();
+    var orderBy = model.orderBy;
+    var manager = configureBreezeManager();
+    var hasChanges = ko.observable(false);
 
     var getSpeakerPartials = function (speakersObservable, forceRemote) {
 
@@ -123,7 +124,11 @@ define([
       }
     }
 
-    var primeData = function (  ) {
+    manager.hasChangesChanged.subscribe(function (eventArgs) {
+      hasChanges(eventArgs.hasChanges);
+    });
+
+    var primeData = function () {
       var promise = Q.all([
         getLookups(),
         getSpeakerPartials(null, true)]);
@@ -140,14 +145,15 @@ define([
         log('Primed data', datacontext.lookups);
       }
     }
-    
+
     var datacontext = {
       getSpeakerPartials: getSpeakerPartials,
       getSessionPartials: getSessionPartials,
       getSessionById: getSessionById,
       cancelChanges: cancelChanges,
       saveChanges: saveChanges,
-      primeData: primeData
+      primeData: primeData,
+      hasChanges: hasChanges
     };
 
     return datacontext;

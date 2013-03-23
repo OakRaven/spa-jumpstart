@@ -6,6 +6,7 @@ define(['services/datacontext', 'durandal/plugins/router'],
     var rooms = ko.observableArray();
     var tracks = ko.observableArray();
     var timeSlots = ko.observableArray();
+    var isSaving = ko.observable(false);
 
     var activate = function (routeData) {
       var id = parseInt(routeData.id);
@@ -28,8 +29,21 @@ define(['services/datacontext', 'durandal/plugins/router'],
     };
 
     var save = function () {
-      return datacontext.saveChanges();
+      isSaving(true)
+      return datacontext.saveChanges().fin(complete);
+
+      function complete() {
+        isSaving(false);
+      }
     };
+
+    var hasChanges = ko.computed(function () {
+      return datacontext.hasChanges();
+    });
+
+    var canSave = ko.computed(function () {
+      return hasChanges() && !isSaving();
+    });
 
     var vm = {
       activate: activate,
@@ -38,7 +52,9 @@ define(['services/datacontext', 'durandal/plugins/router'],
       tracks: tracks,
       timeSlots: timeSlots,
       cancel: cancel,
+      canSave: canSave,
       save: save,
+      hasChanges: hasChanges,
       session: session,
       title: 'Session Details'
     };

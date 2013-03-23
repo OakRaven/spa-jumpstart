@@ -5,11 +5,12 @@
       data-bind="click: goBack">
       <i class="icon-hand-left"></i>Back</button>
     <button class="btn btn-info"
-      data-bind="click: cancel">
+      data-bind="click: cancel, enable: canSave">
       <i class="icon-undo"></i>Cancel</button>
     <button class="btn btn-info"
-      data-bind="click: save">
+      data-bind="click: save, enable: canSave">
       <i class="icon-save"></i>Save</button>
+    <i class="icon-asterisk" data-bind="visible: hasChanges"></i>
   </div>
   <div data-bind="with: session">
     <div class="titleblock">
