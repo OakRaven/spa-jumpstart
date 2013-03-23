@@ -23,6 +23,10 @@ define(['services/datacontext', 'durandal/plugins/router'],
       router.navigateBack();
     };
 
+    var cancel = function () {
+      datacontext.cancelChanges();
+    };
+
     var save = function () {
       return datacontext.saveChanges();
     };
@@ -33,6 +37,7 @@ define(['services/datacontext', 'durandal/plugins/router'],
       rooms: rooms,
       tracks: tracks,
       timeSlots: timeSlots,
+      cancel: cancel,
       save: save,
       session: session,
       title: 'Session Details'

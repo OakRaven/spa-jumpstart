@@ -101,6 +101,11 @@ define([
       }
     }
 
+    var cancelChanges = function () {
+      manager.rejectChanges();
+      log('Cancelled change', null, true);
+    };
+
     var saveChanges = function () {
       return manager.saveChanges()
         .then(saveSucceeded)
@@ -140,6 +145,7 @@ define([
       getSpeakerPartials: getSpeakerPartials,
       getSessionPartials: getSessionPartials,
       getSessionById: getSessionById,
+      cancelChanges: cancelChanges,
       saveChanges: saveChanges,
       primeData: primeData
     };
