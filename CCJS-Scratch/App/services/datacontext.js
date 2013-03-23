@@ -131,7 +131,8 @@ define([
     var primeData = function () {
       var promise = Q.all([
         getLookups(),
-        getSpeakerPartials(null, true)]);
+        getSpeakerPartials(null, true)])
+          .then(applyValidators);
 
       return promise.then(success);
 
@@ -143,6 +144,10 @@ define([
           speakers: getLocal('Persons', orderBy.speaker, true)
         };
         log('Primed data', datacontext.lookups);
+      }
+
+      function applyValidators() {
+        model.applySessionValidators(manager.metadataStore);
       }
     }
 
