@@ -1,7 +1,7 @@
 ﻿/// <reference path="../../Scripts/knockout-2.2.1.js" />
 
-define(['services/datacontext', 'durandal/plugins/router'],
-  function (datacontext, router) {
+define(['services/datacontext', 'durandal/plugins/router', 'durandal/app'],
+  function (datacontext, router, app) {
     var session = ko.observable();
     var rooms = ko.observableArray();
     var tracks = ko.observableArray();
@@ -12,6 +12,26 @@ define(['services/datacontext', 'durandal/plugins/router'],
       var id = parseInt(routeData.id);
       initLookups();
       return datacontext.getSessionById(id, session);
+    };
+
+    var canDeactivate = function () {
+      if (hasChanges()) {
+        var title = 'Do you want to leave "' + session().title() + '" ?';
+        var msg = 'Navigate away and cancel your changes?';
+        return app.showMessage(title, msg, ['Yes', 'No'])
+          .then(confirm);
+      }
+
+      function confirm(selectedOption)
+      {
+        if (selectedOption === 'Yes') {
+          cancel();
+        }
+
+        return selectedOption;
+      }
+
+      return true;
     };
 
     var initLookups = function () {
@@ -47,6 +67,7 @@ define(['services/datacontext', 'durandal/plugins/router'],
 
     var vm = {
       activate: activate,
+      canDeactivate: canDeactivate,
       goBack: goBack,
       rooms: rooms,
       tracks: tracks,
