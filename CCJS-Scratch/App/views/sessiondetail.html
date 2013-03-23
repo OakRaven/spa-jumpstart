@@ -10,6 +10,9 @@
     <button class="btn btn-info"
       data-bind="click: save, enable: canSave">
       <i class="icon-save"></i>Save</button>
+    <button class="btn btn-danger"
+      data-bind="click: deleteSession, disable: hasChanges">
+      <i class="icon-trash"></i>Delete</button>
     <i class="icon-asterisk" data-bind="visible: hasChanges"></i>
   </div>
   <div data-bind="with: session">

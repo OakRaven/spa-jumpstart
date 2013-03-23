@@ -10,6 +10,10 @@
       return datacontext.getSessionPartials(sessions);
     };
 
+    var deactivate = function () {
+      sessions([]);
+    }
+
     var refresh = function () {
       return datacontext.getSessionPartials(sessions, true);
     };
@@ -34,11 +38,12 @@
     };
 
     var vm = {
-      activate:     activate,
+      activate: activate,
+      deactivate: deactivate,
       viewAttached: viewAttached,
-      sessions:     sessions,
-      title:        'Sessions',
-      refresh:      refresh
+      sessions: sessions,
+      title: 'Sessions',
+      refresh: refresh
     };
 
     return vm;

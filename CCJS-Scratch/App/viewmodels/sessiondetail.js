@@ -1,17 +1,59 @@
 ﻿/// <reference path="../../Scripts/knockout-2.2.1.js" />
 
-define(['services/datacontext', 'durandal/plugins/router', 'durandal/app'],
-  function (datacontext, router, app) {
+define([
+  'services/datacontext',
+  'durandal/plugins/router',
+  'durandal/system',
+  'durandal/app',
+  'services/logger'],
+
+  function (datacontext, router, system, app, logger) {
     var session = ko.observable();
     var rooms = ko.observableArray();
     var tracks = ko.observableArray();
     var timeSlots = ko.observableArray();
     var isSaving = ko.observable(false);
+    var isDeleting = ko.observable(false);
 
     var activate = function (routeData) {
       var id = parseInt(routeData.id);
       initLookups();
       return datacontext.getSessionById(id, session);
+    };
+
+    var deleteSession = function () {
+      var msg = 'Delete session "' + session().title() + '" ?';
+      var title = 'Confirm Delete';
+      isDeleting(true);
+
+      return app.showMessage(msg, title, ['Yes', 'No'])
+        .then(confirmDelete);
+
+      function confirmDelete(selectedOption) {
+        if (selectedOption === 'Yes') {
+          session().entityAspect.setDeleted();
+          save()
+            .then(success)
+            .fail(failed)
+            .fin(finish);
+
+          function success() {
+            router.navigateTo('#/sessions');
+          }
+
+          function failed(error) {
+            cancel();
+            var errorMsg = 'Error: ' + error.message;
+            logger.logError(
+              errorMsg, error, system.getModuleId(vm), true);
+          }
+
+          function finish() {
+            return selectedOption;
+          }
+        }
+        isDeleting(false);
+      }
     };
 
     var canDeactivate = function () {
@@ -67,6 +109,7 @@ define(['services/datacontext', 'durandal/plugins/router', 'durandal/app'],
 
     var vm = {
       activate: activate,
+      deleteSession: deleteSession,
       canDeactivate: canDeactivate,
       goBack: goBack,
       rooms: rooms,
